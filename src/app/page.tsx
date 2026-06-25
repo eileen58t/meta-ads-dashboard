@@ -79,7 +79,7 @@ export default function Home() {
         </section>
 
         <footer className="mt-10 border-t border-slate-200 pt-4 text-xs text-slate-400 dark:border-slate-800 dark:text-slate-500">
-          데이터 출처: Meta Ads · {CONVERSION_DEFINITION} · 라이브 연동은 환경변수 META_ACCESS_TOKEN 설정 시 활성화(미설정 시 6/19~6/24 스냅샷) · 못 가져온 값은 미집계로 표기.
+          데이터 출처: Meta Ads · {CONVERSION_DEFINITION} · 라이브 연동은 환경변수 META_ACCESS_TOKEN 설정 시 활성화(미설정 시 6/19~6/25 스냅샷) · 못 가져온 값은 미집계로 표기.
         </footer>
       </main>
     </DashboardProvider>

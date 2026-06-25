@@ -15,16 +15,20 @@ import { CONVERSION_EVENT_LABELS, CONVERSION_DEFINITION } from "@/lib/data";
 
 type Kind = "currency" | "number" | "percent" | "roas";
 
-const META: { key: KpiKey; label: string; kind: Kind }[] = [
-  { key: "spend", label: "지출", kind: "currency" },
-  { key: "impressions", label: "노출", kind: "number" },
-  { key: "clicks", label: "클릭", kind: "number" },
-  { key: "ctr", label: "CTR", kind: "percent" },
-  { key: "cpc", label: "CPC", kind: "currency" },
-  { key: "conversions", label: "전환", kind: "number" },
-  { key: "conversionValue", label: "전환가치", kind: "currency" },
-  { key: "roas", label: "ROAS", kind: "roas" },
-];
+const META: Record<KpiKey, { label: string; kind: Kind }> = {
+  spend: { label: "광고지출", kind: "currency" },
+  impressions: { label: "노출", kind: "number" },
+  clicks: { label: "클릭", kind: "number" },
+  ctr: { label: "CTR", kind: "percent" },
+  cpc: { label: "CPC", kind: "currency" },
+  conversions: { label: "전환", kind: "number" },
+  conversionValue: { label: "총전환가치", kind: "currency" },
+  roas: { label: "ROAS", kind: "roas" },
+};
+
+// 핵심 3종 (상단 강조) / 나머지 (하단)
+const HERO_KEYS: KpiKey[] = ["spend", "conversionValue", "roas"];
+const REST_KEYS: KpiKey[] = ["impressions", "clicks", "ctr", "cpc", "conversions"];
 
 function fmt(kind: Kind, v: number | null): string {
   if (kind === "currency") return formatCurrency(v);
@@ -61,35 +65,45 @@ export default function KpiCards() {
   const dl = computeDeltas(data.daily);
   const sp = computeSparks(data.daily);
 
-  const openMeta = META.find((m) => m.key === open);
+  const openMeta = open ? META[open] : null;
+
+  const card = (key: KpiKey, hero: boolean) => {
+    const m = META[key];
+    const value = data.totals[key];
+    const delta = dl[key];
+    const deltaText = delta.dir === "warn" ? "추적점검" : formatDelta(delta.pct);
+    return (
+      <button
+        key={key}
+        onClick={() => setOpen(key)}
+        className={`rounded-xl border bg-white text-left shadow-sm transition hover:border-indigo-300 hover:shadow-md dark:bg-slate-900 dark:hover:border-indigo-700 ${
+          hero
+            ? "border-indigo-200 p-4 dark:border-indigo-900/60"
+            : "border-slate-200 p-3 dark:border-slate-800"
+        }`}
+      >
+        <p className={`flex items-center justify-between font-medium text-slate-500 dark:text-slate-400 ${hero ? "text-xs" : "text-[11px]"}`}>
+          {m.label}
+          <span className="text-slate-300 dark:text-slate-600">⤢</span>
+        </p>
+        <p className={`mt-0.5 font-bold tabular-nums text-slate-900 dark:text-white ${hero ? "text-2xl sm:text-3xl" : "text-lg"}`}>
+          {fmt(m.kind, value as number)}
+        </p>
+        <div className="my-1.5">
+          <Sparkline series={sp[key]} />
+        </div>
+        <p className={`font-medium ${hero ? "text-xs" : "text-[11px]"} ${deltaColor(delta)}`}>{deltaText}</p>
+      </button>
+    );
+  };
 
   return (
     <>
-      <section aria-label="핵심 지표" className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 lg:grid-cols-8">
-        {META.map((m) => {
-          const value = data.totals[m.key];
-          const delta = dl[m.key];
-          const deltaText = delta.dir === "warn" ? "추적점검" : formatDelta(delta.pct);
-          return (
-            <button
-              key={m.key}
-              onClick={() => setOpen(m.key)}
-              className="rounded-xl border border-slate-200 bg-white p-3 text-left shadow-sm transition hover:border-indigo-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-indigo-700"
-            >
-              <p className="flex items-center justify-between text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                {m.label}
-                <span className="text-slate-300 dark:text-slate-600">⤢</span>
-              </p>
-              <p className="mt-0.5 text-lg font-bold tabular-nums text-slate-900 dark:text-white">
-                {fmt(m.kind, value as number)}
-              </p>
-              <div className="my-1.5">
-                <Sparkline series={sp[m.key]} />
-              </div>
-              <p className={`text-[11px] font-medium ${deltaColor(delta)}`}>{deltaText}</p>
-            </button>
-          );
-        })}
+      <section aria-label="핵심 지표" className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+        {HERO_KEYS.map((k) => card(k, true))}
+      </section>
+      <section aria-label="보조 지표" className="mt-2.5 grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5">
+        {REST_KEYS.map((k) => card(k, false))}
       </section>
 
       {open && openMeta && (

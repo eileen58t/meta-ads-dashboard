@@ -128,7 +128,7 @@ export type PresetKey =
   | "maximum";
 
 export const PRESETS: { key: PresetKey; label: string }[] = [
-  { key: "snapshot", label: "6/19 ~ 6/24 (스냅샷)" },
+  { key: "snapshot", label: "6/19 ~ 6/25 (스냅샷)" },
   { key: "today", label: "오늘" },
   { key: "yesterday", label: "어제" },
   { key: "last_3d", label: "최근 3일" },
@@ -145,52 +145,53 @@ const DAILY: DailyStat[] = [
   { date: "2026-06-21", spend: 2, impressions: 1, clicks: 0, ctr: 0, cpc: null },
   { date: "2026-06-22", spend: 26432, impressions: 5458, clicks: 149, ctr: 2.73, cpc: 177 },
   { date: "2026-06-23", spend: 12685, impressions: 2407, clicks: 85, ctr: 3.53, cpc: 149 },
-  { date: "2026-06-24", spend: 16657, impressions: 941, clicks: 56, ctr: 5.95, cpc: 297 },
+  { date: "2026-06-24", spend: 35742, impressions: 2234, clicks: 112, ctr: 5.01, cpc: 319 },
+  { date: "2026-06-25", spend: 1206, impressions: 77, clicks: 2, ctr: 2.6, cpc: 603 },
 ];
 
 const ADSETS: AdSet[] = [
-  { name: "슈가놉 달콤세트", status: "ACTIVE", objective: "트래픽", spend: 37825, impressions: 7117, clicks: 214, ctr: 3.01, cpc: 177, result: "랜딩조회 196" },
-  { name: "우리밀 초코 시나몬크래커", status: "ACTIVE", objective: "트래픽", spend: 6287, impressions: 1178, clicks: 63, ctr: 5.35, cpc: 100, result: "랜딩조회 40" },
-  { name: "슈가놉 달콤세트(판매)", status: "ACTIVE", objective: "판매", spend: 6098, impressions: 224, clicks: 9, ctr: 4.02, cpc: 678, result: "구매 0" },
-  { name: "우리밀 크래커(판매)", status: "ACTIVE", objective: "판매", spend: 5564, impressions: 287, clicks: 4, ctr: 1.39, cpc: 1391, result: "구매 0" },
+  { name: "슈가놉 달콤세트", status: "PAUSED", objective: "트래픽", spend: 40374, impressions: 7325, clicks: 226, ctr: 3.09, cpc: 179, result: "랜딩조회 211" },
+  { name: "우리밀 초코 시나몬크래커", status: "PAUSED", objective: "트래픽", spend: 11522, impressions: 1612, clicks: 91, ctr: 5.65, cpc: 127, result: "랜딩조회 67" },
+  { name: "슈가놉 달콤세트(판매)", status: "PAUSED", objective: "판매", spend: 11192, impressions: 516, clicks: 19, ctr: 3.68, cpc: 589, result: "구매 0" },
+  { name: "우리밀 크래커(판매)", status: "PAUSED", objective: "판매", spend: 12977, impressions: 723, clicks: 12, ctr: 1.66, cpc: 1081, result: "구매 0" },
 ];
 
 const CREATIVES: Creative[] = [
-  { id: "120249342032010294", name: "이미지광고 (달콤세트)", type: "이미지", objective: "트래픽", status: "ACTIVE", spend: 37825, impressions: 7117, clicks: 214, ctr: 3.01, cpc: 177, result: "랜딩조회 196" },
-  { id: "120249342832700294", name: "영상이미지 (시나몬크래커)", type: "영상", objective: "트래픽", status: "ACTIVE", spend: 6287, impressions: 1178, clicks: 63, ctr: 5.35, cpc: 100, result: "랜딩조회 40" },
-  { id: "120249426032550294", name: "이미지광고 (달콤세트·판매)", type: "이미지", objective: "판매", status: "ACTIVE", spend: 6098, impressions: 224, clicks: 9, ctr: 4.02, cpc: 678, result: "구매 0" },
-  { id: "120249426032530294", name: "영상이미지 (크래커·판매)", type: "영상", objective: "판매", status: "ACTIVE", spend: 5564, impressions: 287, clicks: 4, ctr: 1.39, cpc: 1391, result: "구매 0" },
+  { id: "120249342032010294", name: "이미지광고 (달콤세트)", type: "이미지", objective: "트래픽", status: "PAUSED", spend: 40374, impressions: 7325, clicks: 226, ctr: 3.09, cpc: 179, result: "랜딩조회 211" },
+  { id: "120249342832700294", name: "영상이미지 (시나몬크래커)", type: "영상", objective: "트래픽", status: "PAUSED", spend: 11522, impressions: 1612, clicks: 91, ctr: 5.65, cpc: 127, result: "랜딩조회 67" },
+  { id: "120249426032550294", name: "이미지광고 (달콤세트·판매)", type: "이미지", objective: "판매", status: "PAUSED", spend: 11192, impressions: 516, clicks: 19, ctr: 3.68, cpc: 589, result: "구매 0" },
+  { id: "120249426032530294", name: "영상이미지 (크래커·판매)", type: "영상", objective: "판매", status: "PAUSED", spend: 12977, impressions: 723, clicks: 12, ctr: 1.66, cpc: 1081, result: "구매 0" },
 ];
 
 const SEGMENTS: Record<SegmentKey, Segment[]> = {
   age: [
-    { label: "18-24", spend: 9766, impressions: 2888, clicks: 70, ctr: 2.42, cpc: 140 },
-    { label: "25-34", spend: 20193, impressions: 3614, clicks: 112, ctr: 3.1, cpc: 180 },
-    { label: "35-44", spend: 14701, impressions: 1508, clicks: 69, ctr: 4.58, cpc: 213 },
-    { label: "45-54", spend: 6207, impressions: 465, clicks: 18, ctr: 3.87, cpc: 345 },
-    { label: "55-64", spend: 3403, impressions: 204, clicks: 11, ctr: 5.39, cpc: 309 },
-    { label: "65+", spend: 1673, impressions: 135, clicks: 11, ctr: 8.15, cpc: 152 },
+    { label: "18-24", spend: 10770, impressions: 3048, clicks: 71, ctr: 2.33, cpc: 152 },
+    { label: "25-34", spend: 23447, impressions: 3938, clicks: 124, ctr: 3.15, cpc: 189 },
+    { label: "35-44", spend: 20419, impressions: 1878, clicks: 88, ctr: 4.69, cpc: 232 },
+    { label: "45-54", spend: 12766, impressions: 778, clicks: 32, ctr: 4.11, cpc: 399 },
+    { label: "55-64", spend: 6223, impressions: 345, clicks: 19, ctr: 5.51, cpc: 328 },
+    { label: "65+", spend: 2609, impressions: 197, clicks: 15, ctr: 7.61, cpc: 174 },
   ],
   gender: [
-    { label: "여성", spend: 42038, impressions: 5679, clicks: 202, ctr: 3.56, cpc: 208 },
-    { label: "남성", spend: 13704, impressions: 3087, clicks: 88, ctr: 2.85, cpc: 156 },
-    { label: "미상", spend: 201, impressions: 48, clicks: 1, ctr: 2.08, cpc: 201 },
+    { label: "여성", spend: 58297, impressions: 6650, clicks: 255, ctr: 3.83, cpc: 229 },
+    { label: "남성", spend: 17595, impressions: 3480, clicks: 93, ctr: 2.67, cpc: 189 },
+    { label: "미상", spend: 342, impressions: 54, clicks: 1, ctr: 1.85, cpc: 342 },
   ],
   region: [
-    { label: "경기", spend: 13727, impressions: 2059, clicks: 64, ctr: 3.11, cpc: 214 },
-    { label: "서울", spend: 13356, impressions: 2288, clicks: 79, ctr: 3.45, cpc: 169 },
-    { label: "부산", spend: 3842, impressions: 550, clicks: 15, ctr: 2.73, cpc: 256 },
-    { label: "경북", spend: 3273, impressions: 381, clicks: 18, ctr: 4.72, cpc: 182 },
-    { label: "인천", spend: 2938, impressions: 436, clicks: 12, ctr: 2.75, cpc: 245 },
-    { label: "경남", spend: 2888, impressions: 448, clicks: 13, ctr: 2.9, cpc: 222 },
-    { label: "대구", spend: 2405, impressions: 422, clicks: 8, ctr: 1.9, cpc: 301 },
-    { label: "충남", spend: 2388, impressions: 399, clicks: 12, ctr: 3.01, cpc: 199 },
+    { label: "서울", spend: 16390, impressions: 2561, clicks: 90, ctr: 3.51, cpc: 182 },
+    { label: "경기", spend: 18948, impressions: 2411, clicks: 80, ctr: 3.32, cpc: 237 },
+    { label: "부산", spend: 5528, impressions: 635, clicks: 20, ctr: 3.15, cpc: 276 },
+    { label: "경남", spend: 4105, impressions: 546, clicks: 18, ctr: 3.3, cpc: 228 },
+    { label: "인천", spend: 4120, impressions: 507, clicks: 15, ctr: 2.96, cpc: 275 },
+    { label: "대구", spend: 3390, impressions: 475, clicks: 10, ctr: 2.11, cpc: 339 },
+    { label: "충남", spend: 3856, impressions: 474, clicks: 18, ctr: 3.8, cpc: 214 },
+    { label: "경북", spend: 4123, impressions: 441, clicks: 18, ctr: 4.08, cpc: 229 },
   ],
   platform: [
-    { label: "Instagram", spend: 54008, impressions: 8204, clicks: 275, ctr: 3.35, cpc: 196 },
-    { label: "Facebook", spend: 1587, impressions: 483, clicks: 16, ctr: 3.31, cpc: 99 },
-    { label: "Threads", spend: 336, impressions: 124, clicks: 0, ctr: 0, cpc: null },
-    { label: "Audience Net.", spend: 12, impressions: 3, clicks: 0, ctr: 0, cpc: null },
+    { label: "Instagram", spend: 72448, impressions: 9352, clicks: 327, ctr: 3.5, cpc: 222 },
+    { label: "Facebook", spend: 2254, impressions: 518, clicks: 18, ctr: 3.47, cpc: 125 },
+    { label: "Threads", spend: 1439, impressions: 307, clicks: 4, ctr: 1.3, cpc: 360 },
+    { label: "Audience Net.", spend: 93, impressions: 7, clicks: 0, ctr: 0, cpc: null },
   ],
 };
 
@@ -220,14 +221,14 @@ const convSum = sumConversions(CONV_EVENTS);
 const CONVERSIONS: Conversions = {
   count: convSum.count,
   value: convSum.value,
-  landingViews: 236,
+  landingViews: 278, // 트래픽 캠페인 랜딩페이지 조회 (211 + 67)
   events: CONV_EVENTS,
 };
 
 // 기본 스냅샷 (라이브 실패/토큰 미설정 시 폴백)
 export const SNAPSHOT: DashboardData = {
   account: { id: "1325641186375906", name: "13_슈가놉_이은영", business: "Artience", currency: CURRENCY },
-  period: { since: "2026-06-19", until: "2026-06-24", label: "6/19 ~ 6/24 (스냅샷)", note: "6/24는 진행 중인 부분 데이터" },
+  period: { since: "2026-06-19", until: "2026-06-25", label: "6/19 ~ 6/25 (스냅샷)", note: "6/25 기준 · 현재 전 캠페인 일시중지" },
   totals: totalsFromDaily(DAILY, { count: CONVERSIONS.count, value: CONVERSIONS.value }),
   daily: DAILY,
   adsets: ADSETS,
