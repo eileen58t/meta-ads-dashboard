@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>슈가놉 메타 광고 통합 대시보드 · 6/19~6/25</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{
+  --bg:#faf9f5; --card:#ffffff; --surface:#f3f1ea; --line:rgba(0,0,0,0.13); --line2:rgba(0,0,0,0.28);
+  --t1:#1a1a18; --t2:#5F5E5A; --t3:#88877f; --info:#185FA5; --infobg:#E6F1FB;
+  --warn:#854F0B; --warnbg:#FAEEDA; --ok:#3B6D11; --okbg:#EAF3DE; --danger:#A32D2D;
+  --blue:#378ADD; --amber:#EF9F27; --teal:#1D9E75; --coral:#D85A30; --violet:#7F77DD;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#1d1c17; --card:#26251f; --surface:#2f2e27; --line:rgba(255,255,255,0.12); --line2:rgba(255,255,255,0.25);
+    --t1:#f2f0e9; --t2:#b4b2a9; --t3:#888780; --info:#B5D4F4; --infobg:#0C447C;
+    --warn:#FAC775; --warnbg:#633806; --ok:#C0DD97; --okbg:#27500A; --danger:#F7C1C1; }
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--t1);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Malgun Gothic","Apple SD Gothic Neo",sans-serif;line-height:1.5;}
+.wrap{max-width:780px;margin:0 auto;padding:24px 18px 60px;display:flex;flex-direction:column;gap:1rem;}
+.card{background:var(--card);border:0.5px solid var(--line);border-radius:12px;}
+.muted{color:var(--t2);font-size:13px;}
+select{height:30px;font-size:12px;border:0.5px solid var(--line2);border-radius:8px;background:var(--card);color:var(--t1);padding:0 8px;}
+button.tab{font-size:12px;padding:5px 12px;border:0.5px solid var(--line2);border-radius:8px;background:transparent;color:var(--t1);cursor:pointer;}
+button.tab.active{background:var(--infobg);color:var(--info);border-color:var(--info);}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{font-size:11px;color:var(--t3);font-weight:500;text-align:right;padding:6px 4px;border-bottom:0.5px solid var(--line);}
+th.l,td.l{text-align:left;}
+td{padding:7px 4px;text-align:right;border-bottom:0.5px solid var(--line);}
+.tag{border-radius:5px;padding:1px 5px;font-size:10px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+    <div>
+      <div style="font-size:12px;color:var(--info);font-weight:500;">Meta Ads · Artience</div>
+      <div style="font-size:22px;font-weight:500;">슈가놉 메타 광고 통합 대시보드</div>
+    </div>
+    <div style="font-size:12px;color:var(--t2);border:0.5px solid var(--line2);padding:4px 10px;border-radius:8px;"><i class="ti ti-calendar"></i> 6/19 ~ 6/25 · KRW</div>
+  </div>
+  <div class="muted" style="margin-top:-6px;">6/25 기준 스냅샷 · 현재 전 캠페인 일시중지(PAUSED) · 증감은 6/25 vs 6/24</div>
+
+  <div>
+    <div class="muted" style="margin-bottom:6px;">핵심 지표</div>
+    <div id="hero" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;"></div>
+  </div>
+  <div>
+    <div class="muted" style="margin-bottom:6px;">보조 지표</div>
+    <div id="rest" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;"></div>
+  </div>
+
+  <div class="card" style="padding:14px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
+      <div class="muted"><i class="ti ti-chart-line"></i> 일자별 이중축 비교</div>
+      <div style="display:flex;gap:5px;align-items:center;">
+        <select id="leftSel"><option value="spend">지출</option><option value="impressions">노출</option><option value="clicks">클릭</option></select>
+        <span style="font-size:12px;color:var(--t3);">vs</span>
+        <select id="rightSel"><option value="ctr">CTR</option><option value="cpc">CPC</option></select>
+      </div>
+    </div>
+    <div style="position:relative;width:100%;height:230px;"><canvas id="cmpChart" role="img" aria-label="일자별 지표 비교"></canvas></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    <div class="card" style="padding:14px;">
+      <div class="muted" style="margin-bottom:10px;"><i class="ti ti-filter"></i> 전환 퍼널</div>
+      <div id="funnel" style="display:flex;flex-direction:column;gap:7px;"></div>
+    </div>
+    <div class="card" style="padding:14px;">
+      <div class="muted" style="margin-bottom:10px;"><i class="ti ti-arrows-sort"></i> 광고세트 효율 (CTR)</div>
+      <div id="eff" style="display:flex;flex-direction:column;gap:5px;"></div>
+    </div>
+  </div>
+
+  <div class="card" style="padding:14px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+      <div class="muted"><i class="ti ti-layout-grid"></i> 분류별 성과</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="tab active" data-k="age">연령</button>
+        <button class="tab" data-k="gender">성별</button>
+        <button class="tab" data-k="region">지역</button>
+        <button class="tab" data-k="platform">플랫폼</button>
+      </div>
+    </div>
+    <div style="position:relative;width:100%;height:240px;"><canvas id="bdChart" role="img" aria-label="분류별 성과"></canvas></div>
+  </div>
+
+  <div class="card" style="padding:14px;">
+    <div class="muted" style="margin-bottom:10px;"><i class="ti ti-photo"></i> 소재별 성과 (CTR 순)</div>
+    <div style="overflow-x:auto;"><table id="creTable"><thead><tr>
+      <th class="l">소재</th><th>지출</th><th>노출</th><th>클릭</th><th>CTR</th><th>CPC</th><th class="l" style="text-align:right;">결과</th>
+    </tr></thead><tbody id="creBody"></tbody></table></div>
+  </div>
+
+  <div id="convBox" style="border-radius:12px;padding:14px 16px;"></div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;">
+    <div class="card" style="padding:13px 15px;">
+      <div style="font-size:12px;color:var(--ok);margin-bottom:6px;"><i class="ti ti-trophy"></i> 베스트</div>
+      <div id="best"></div>
+    </div>
+    <div class="card" style="padding:13px 15px;">
+      <div style="font-size:12px;color:var(--danger);margin-bottom:6px;"><i class="ti ti-arrow-down-right"></i> 워스트</div>
+      <div id="worst"></div>
+    </div>
+  </div>
+
+  <div class="card" style="padding:14px 16px;">
+    <div class="muted" style="margin-bottom:10px;"><i class="ti ti-checklist"></i> 추천 액션 — 무엇을 해야 하나</div>
+    <div id="actions" style="display:flex;flex-direction:column;gap:9px;"></div>
+  </div>
+
+  <div style="font-size:11px;color:var(--t3);text-align:center;margin-top:8px;">
+    계정 13_슈가놉_이은영(1325641186375906) · 전환 = 장바구니 담기 + 결제 시작 + 구매 · 데이터 스냅샷 2026-06-25 · Meta Ads
+  </div>
+</div>
+<script>
+(function(){
+  var isDark=matchMedia('(prefers-color-scheme: dark)').matches;
+  var tick=isDark?'#B4B2A9':'#5F5E5A', grid=isDark?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.06)';
+  var BLUE='#378ADD',AMBER='#EF9F27',TEAL='#1D9E75',CORAL='#D85A30',VIOLET='#7F77DD';
+  var won=function(n){return n==null?'미집계':'₩'+Math.round(n).toLocaleString('ko-KR');};
+  var pct=function(n){return n==null?'미집계':n.toFixed(2)+'%';};
+
+  var labels=['6/19','6/20','6/21','6/22','6/23','6/24','6/25'];
+  var D={spend:[58,109,2,26432,12685,35742,1206],impressions:[4,3,1,5458,2407,2234,77],clicks:[1,0,0,149,85,112,2],ctr:[25,null,null,2.73,3.53,5.01,2.6],cpc:[58,null,null,177,149,319,603]};
+  var totals={spend:76234,impressions:10184,clicks:349,ctr:3.43,cpc:218,conversions:0,conversionValue:0,roas:null};
+
+  function spark(arr){var mx=Math.max.apply(null,arr.map(function(v){return v||0}))||1;return '<div style="display:flex;align-items:flex-end;gap:2px;height:16px;margin:3px 0;">'+arr.map(function(v){return '<div style="flex:1;background:'+BLUE+';opacity:.55;border-radius:1px;height:'+Math.max(8,Math.round((v||0)/mx*100))+'%;"></div>';}).join('')+'</div>';}
+
+  var hero=[
+    {l:'광고지출',v:won(totals.spend),d:'-97%',c:'var(--danger)',sp:D.spend},
+    {l:'총전환가치',v:won(totals.conversionValue),d:'추적점검',c:'var(--warn)',sp:[0,0,0,0,0,0,0]},
+    {l:'ROAS',v:(totals.roas==null?'미집계':totals.roas.toFixed(2)+'x'),d:'추적점검',c:'var(--warn)',sp:[0,0,0,0,0,0,0]}
+  ];
+  document.getElementById('hero').innerHTML=hero.map(function(k){return '<button style="text-align:left;border:0.5px solid var(--info);background:var(--card);border-radius:12px;padding:14px;cursor:default;"><div style="font-size:12px;color:var(--t2);">'+k.l+'</div><div style="font-size:26px;font-weight:500;margin:2px 0;">'+k.v+'</div>'+spark(k.sp)+'<div style="font-size:12px;color:'+k.c+';">'+k.d+'</div></button>';}).join('');
+
+  var rest=[
+    {l:'노출',v:totals.impressions.toLocaleString(),d:'-97%',c:'var(--danger)',sp:D.impressions},
+    {l:'클릭',v:totals.clicks.toLocaleString(),d:'-98%',c:'var(--danger)',sp:D.clicks},
+    {l:'CTR',v:pct(totals.ctr),d:'-48%',c:'var(--danger)',sp:[25,0,0,2.73,3.53,5.01,2.6]},
+    {l:'CPC',v:won(totals.cpc),d:'+89%',c:'var(--danger)',sp:[58,0,0,177,149,319,603]},
+    {l:'전환',v:totals.conversions,d:'추적점검',c:'var(--warn)',sp:[0,0,0,0,0,0,0]}
+  ];
+  document.getElementById('rest').innerHTML=rest.map(function(k){return '<div style="background:var(--surface);border-radius:8px;padding:8px;"><div style="font-size:11px;color:var(--t3);">'+k.l+'</div><div style="font-size:16px;font-weight:500;margin:1px 0;">'+k.v+'</div>'+spark(k.sp)+'<div style="font-size:10px;color:'+k.c+';">'+k.d+'</div></div>';}).join('');
+
+  var f=[['노출',10184,100,BLUE],['클릭',349,3.4,TEAL],['랜딩조회',278,2.7,'#37A2DD'],['전환(구매)',0,0,CORAL]];
+  document.getElementById('funnel').innerHTML=f.map(function(x){return '<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;"><span style="color:var(--t2);">'+x[0]+'</span><span style="font-weight:500;">'+x[1].toLocaleString()+'</span></div><div style="height:16px;background:var(--surface);border-radius:4px;"><div style="width:'+Math.max(2,x[2])+'%;height:100%;background:'+x[3]+';border-radius:4px;"></div></div></div>';}).join('')+'<div style="font-size:11px;color:var(--warn);margin-top:4px;">클릭→전환 0% · 픽셀/랜딩 점검 필요</div>';
+
+  var eff=[['우리밀 시나몬(트래픽)',11522,5.65,'ok'],['달콤세트(판매)',11192,3.68,''],['달콤세트(트래픽)',40374,3.09,''],['우리밀 크래커(판매)',12977,1.66,'bad']];
+  document.getElementById('eff').innerHTML=eff.map(function(e){var c=e[3]==='ok'?'var(--ok)':e[3]==='bad'?'var(--danger)':'var(--t2)';return '<div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;border-bottom:0.5px solid var(--line);padding:4px 0;"><span style="color:var(--t2);max-width:56%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+e[0]+'</span><span>₩'+e[1].toLocaleString()+' · <span style="color:'+c+';font-weight:500;">'+e[2]+'%</span></span></div>';}).join('');
+
+  var creatives=[
+    {n:'영상이미지 (시나몬크래커)',t:'영상',s:11522,i:1612,c:91,ctr:5.65,cpc:127,r:'랜딩조회 67',best:1},
+    {n:'이미지광고 (달콤세트)',t:'이미지',s:40374,i:7325,c:226,ctr:3.09,cpc:179,r:'랜딩조회 211'},
+    {n:'이미지광고 (달콤세트·판매)',t:'이미지',s:11192,i:516,c:19,ctr:3.68,cpc:589,r:'구매 0'},
+    {n:'영상이미지 (크래커·판매)',t:'영상',s:12977,i:723,c:12,ctr:1.66,cpc:1081,r:'구매 0'}
+  ].sort(function(a,b){return b.ctr-a.ctr;});
+  document.getElementById('creBody').innerHTML=creatives.map(function(c){var tg=c.t==='영상'?'background:#EAE8FB;color:#534AB7;':'background:#E1EEFB;color:#185FA5;';return '<tr><td class="l"><span class="tag" style="'+tg+'">'+c.t+'</span> '+c.n+(c.best?' <span class="tag" style="background:var(--okbg);color:var(--ok);">베스트</span>':'')+'</td><td>'+won(c.s)+'</td><td>'+c.i.toLocaleString()+'</td><td>'+c.c+'</td><td style="font-weight:500;">'+c.ctr+'%</td><td>'+won(c.cpc)+'</td><td class="l" style="text-align:right;color:var(--t3);font-size:11px;">'+c.r+'</td></tr>';}).join('');
+
+  document.getElementById('convBox').style.cssText='border-radius:12px;padding:14px 16px;background:var(--warnbg);border:0.5px solid var(--warn);';
+  var ev=[['장바구니 담기',0,0],['결제 시작',0,0],['구매',0,0]];
+  document.getElementById('convBox').innerHTML='<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="font-size:14px;font-weight:500;color:var(--warn);"><i class="ti ti-alert-triangle"></i> 전환 / 전환가치</span><span style="font-size:20px;font-weight:500;color:var(--warn);">0건 / ₩0</span></div><div style="font-size:11px;color:var(--warn);opacity:.85;margin-top:3px;">전환 = 장바구니 담기 + 결제 시작 + 구매</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px;">'+ev.map(function(e){return '<div style="background:rgba(255,255,255,0.4);border-radius:8px;padding:6px 8px;"><div style="font-size:11px;color:var(--warn);opacity:.85;">'+e[0]+'</div><div style="font-size:14px;font-weight:500;color:var(--warn);">'+e[1]+'건 <span style="font-size:11px;font-weight:400;opacity:.7;">₩'+e[2]+'</span></div></div>';}).join('')+'</div><div style="font-size:12px;color:var(--warn);opacity:.9;margin-top:8px;">클릭 349 · 랜딩조회 278건은 발생했지만 세 이벤트 모두 0 → 픽셀·전환 추적 연결 점검 필요</div>';
+
+  function rows(items){return items.map(function(t){return '<div style="display:flex;justify-content:space-between;font-size:11px;padding:2px 0;"><span style="color:var(--t2);">'+t[0]+'</span><span style="font-weight:500;">'+t[1]+'</span></div>';}).join('');}
+  document.getElementById('best').innerHTML=rows([['65+ CTR','7.61%'],['영상 소재 CTR','5.65%'],['Facebook CPC','₩125'],['여성 CTR','3.83%']]);
+  document.getElementById('worst').innerHTML=rows([['우리밀 판매 CTR','1.66%'],['대구 CPC','₩339'],['Threads CTR','1.30%'],['판매 전환','0']]);
+
+  var acts=[['ti-player-pause','전 캠페인 일시중지 상태 — 성과 좋은 트래픽 세트부터 재개 검토'],['ti-video','영상 소재 비중 확대 — CTR 5.65% vs 이미지 3.09% (약 83%↑)'],['ti-target','35-44세·여성·수도권 코어 타깃 집중'],['ti-bug','판매 캠페인 픽셀·전환 추적 점검 — 클릭·랜딩은 있는데 구매 0']];
+  document.getElementById('actions').innerHTML=acts.map(function(a){return '<div style="display:flex;gap:9px;align-items:flex-start;font-size:12px;"><i class="ti '+a[0]+'" style="font-size:16px;color:var(--info);margin-top:1px;"></i><span style="line-height:1.5;">'+a[1]+'</span></div>';}).join('');
+
+  var META={spend:{n:'지출(₩)',f:function(v){return '₩'+Math.round(v/1000)+'k';}},impressions:{n:'노출',f:function(v){return v;}},clicks:{n:'클릭',f:function(v){return v;}},ctr:{n:'CTR(%)',f:function(v){return v+'%';}},cpc:{n:'CPC(₩)',f:function(v){return '₩'+v;}}};
+  var cmp;
+  function drawCmp(){var L=leftSel.value,R=rightSel.value;if(cmp)cmp.destroy();cmp=new Chart(document.getElementById('cmpChart'),{data:{labels:labels,datasets:[{type:'bar',label:META[L].n,data:D[L],backgroundColor:BLUE,yAxisID:'y',order:2},{type:'line',label:META[R].n,data:D[R],borderColor:AMBER,backgroundColor:AMBER,borderWidth:2,tension:.3,pointRadius:3,spanGaps:true,yAxisID:'y1',order:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:tick,boxWidth:10,font:{size:11}}}},scales:{x:{ticks:{color:tick},grid:{display:false}},y:{position:'left',ticks:{color:tick,callback:META[L].f},grid:{color:grid}},y1:{position:'right',ticks:{color:tick,callback:META[R].f},grid:{display:false}}}}});}
+  var leftSel=document.getElementById('leftSel'),rightSel=document.getElementById('rightSel');
+  leftSel.onchange=drawCmp;rightSel.onchange=drawCmp;drawCmp();
+
+  var BD={age:{l:['18-24','25-34','35-44','45-54','55-64','65+'],s:[10770,23447,20419,12766,6223,2609],c:[2.33,3.15,4.69,4.11,5.51,7.61]},gender:{l:['여성','남성','미상'],s:[58297,17595,342],c:[3.83,2.67,1.85]},region:{l:['서울','경기','부산','경남','인천','대구','충남','경북'],s:[16390,18948,5528,4105,4120,3390,3856,4123],c:[3.51,3.32,3.15,3.3,2.96,2.11,3.8,4.08]},platform:{l:['Instagram','Facebook','Threads','Aud.Net'],s:[72448,2254,1439,93],c:[3.5,3.47,1.3,0]}};
+  var bd;
+  function drawBd(k){var x=BD[k];if(bd)bd.destroy();bd=new Chart(document.getElementById('bdChart'),{data:{labels:x.l,datasets:[{type:'bar',label:'지출(₩)',data:x.s,backgroundColor:TEAL,yAxisID:'y',order:2},{type:'line',label:'CTR(%)',data:x.c,borderColor:CORAL,backgroundColor:CORAL,borderWidth:2,tension:.2,pointRadius:3,yAxisID:'y1',order:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:tick,boxWidth:10,font:{size:11}}}},scales:{x:{ticks:{color:tick},grid:{display:false}},y:{position:'left',ticks:{color:tick,callback:function(v){return '₩'+Math.round(v/1000)+'k';}},grid:{color:grid}},y1:{position:'right',ticks:{color:tick,callback:function(v){return v+'%';}},grid:{display:false}}}}});}
+  drawBd('age');
+  Array.prototype.forEach.call(document.querySelectorAll('button.tab'),function(b){b.onclick=function(){document.querySelectorAll('button.tab').forEach(function(x){x.classList.remove('active');});b.classList.add('active');drawBd(b.dataset.k);};});
+})();
+</script>
+</body>
+</html>
